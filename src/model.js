@@ -120,8 +120,7 @@ const model = {
 				location: "Utebod",
 				tags: ["verktøy"],
 				notes: "Lånt ut til Tom",
-				imageUrl:
-					"https://www.ajprodukter.no/p/trappestige-20900-20902",
+				imageUrl: "./public/default-item-image.png",
 			},
 
 			{
@@ -131,8 +130,7 @@ const model = {
 				location: "Utebod",
 				tags: ["verktøy", "Meec"],
 				notes: "DU finner alt her",
-				imageUrl:
-					"https://www.jula.no/catalog/verktoy-og-maskiner/handverktoy/verktoysett/verktoyvogner/verktoyvogn-028658/",
+				imageUrl: "./public/default-item-image.png",
 			},
 		],
 	},
