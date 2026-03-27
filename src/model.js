@@ -3,6 +3,7 @@ const model = {
 		element: document.getElementById("app"),
 		currentPage: "home",
 		pages: ["home", "newItem", "viewItem"],
+		currentItemIndex: null,
 	},
 
 	inputs: {
@@ -120,7 +121,8 @@ const model = {
 				location: "Utebod",
 				tags: ["verktøy"],
 				notes: "Lånt ut til Tom",
-				imageUrl: "./public/default-item-image.png",
+				imageUrl:
+					"https://static.cowab.com/cdn-cgi/image/width=590,format=auto/globalassets/155446.jpg?ref=A15493457A",
 			},
 
 			{
@@ -130,7 +132,8 @@ const model = {
 				location: "Utebod",
 				tags: ["verktøy", "Meec"],
 				notes: "DU finner alt her",
-				imageUrl: "./public/default-item-image.png",
+				imageUrl:
+					"https://assets.cdn.jula.com/v2/preset:jpgoptimized/w:640/215117?lastmodified=20251125141125",
 			},
 		],
 	},

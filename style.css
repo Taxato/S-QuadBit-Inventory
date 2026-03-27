@@ -8,6 +8,12 @@
 }
 /* #endregion */
 
+:root {
+	--icon-color: #1e1e1e;
+	--text-primary: black;
+	--text-tertiary: #b3b3b3;
+}
+
 body {
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -29,25 +35,243 @@ body {
 		/* height: 100%; */
 		aspect-ratio: 1;
 		object-fit: scale-down;
-		border: 2px solid black;
-		border-radius: 2rem;
+		/* border: 1px solid black; */
+		border-radius: 1rem;
+	}
+
+	h4 {
+		text-align: start;
+		width: 100%;
+		padding-inline: 0.5rem;
+		font-weight: normal;
 	}
 }
 
 .top-bar {
 	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	padding-inline: 0.5rem;
+	margin-block: 0.5rem;
+}
+
+.search-bar-container {
+	width: 100%;
+	position: relative;
+	display: flex;
+	align-items: center;
+
+	img {
+		/* height: 20px; */
+		position: absolute;
+		right: 10px;
+		background-color: white;
+		padding-left: 0.25rem;
+		stroke: var(--icon-color);
+
+		/* top: 50%;
+		transform: translateY(-50%); */
+	}
 }
 
 .search-bar {
-	width: 90%;
+	/* width: 100%; */
+	flex-grow: 1;
 	border: 1px solid black;
 	border-radius: 4rem;
-	line-height: 2em;
-	margin-left: 1rem;
+	padding: 0.5rem 1rem;
+	outline: none;
+	/* line-height: 2em; */
+	/* margin-left: 1rem; */
+	&::placeholder {
+		font-style: italic;
+		color: var(--text-tertiary);
+	}
 }
 
-.add-item-btn {
+/* .add-item-btn {
 	aspect-ratio: 1;
-	border: 2px solid black;
+	border: 1px solid black;
 	border-radius: 100%;
+	width: 2rem;
+	height: 2rem;
+} */
+
+.add-item-btn {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+
+	/* padding: 0.25rem; */
+	border-radius: 50%;
+	background-color: white;
+	border: 1px solid var(--icon-color);
+	stroke: var(--icon-color);
+	cursor: pointer;
+}
+
+.new-item-page {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding-inline: 0.5rem;
+}
+
+.input-field {
+	border: 1px solid solid black;
+	border-radius: 0.5rem;
+	width: 100%;
+	padding: 0.5rem 1rem;
+}
+
+.image-upload {
+	border: 1px solid black;
+	border-radius: 4rem;
+	padding: 0.5rem 1rem;
+	background-color: white;
+	/* width: 50vw; */
+	width: max-content;
+	margin-inline: auto;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5rem;
+
+	img {
+		height: 1.25em;
+		background-color: white;
+		padding-left: 0.25rem;
+		stroke: var(--icon-color);
+
+		/* top: 50%;
+		transform: translateY(-50%); */
+	}
+}
+
+.action-buttons {
+	margin-left: 5%;
+}
+
+.cancel {
+	border: 1px solid black;
+	border-radius: 1em;
+	width: 25vw;
+	padding: 1rem;
+}
+
+.save {
+	border: 1px solid black;
+	border-radius: 1em;
+	width: 25vw;
+	padding: 1rem;
+	background-color: black;
+	color: white;
+	margin-left: 35vw;
+}
+
+.view-Item-Page {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	max-width: 600px;
+	margin: 0 auto;
+}
+
+.view-Item-Page img {
+	width: 100%;
+	max-width: 400px;
+	border-radius: 10px;
+	margin: 15px 0;
+}
+
+.view-Item-Page h1 {
+	font-size: 2.5rem;
+	margin-bottom: 5px;
+}
+
+.view-Item-Page p:nth-of-type(1) {
+	font-size: 1.2rem;
+	color: gray;
+	margin-bottom: 15px;
+}
+
+.view-Item-Page p:nth-of-type(2) {
+	font-size: 1rem;
+	max-width: 500px;
+}
+
+.notes-container {
+	position: relative;
+	width: 100%;
+	max-width: 400px;
+	margin-top: 20px;
+}
+
+.notes-container input {
+	width: 100%;
+	padding: 10px 80px 10px 10px;
+	font-size: 1rem;
+	box-sizing: border-box;
+}
+
+.notes-container button {
+	position: absolute;
+	right: 5px;
+	bottom: 5px;
+	padding: 5px 10px;
+	cursor: pointer;
+}
+
+.view-item-page-btns {
+	margin-top: 20px;
+
+	button {
+		margin: 5px;
+		padding: 10px 15px;
+		cursor: pointer;
+	}
+}
+
+#modal-wrapper {
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	top: 0;
+	left: 0;
+	backdrop-filter: blur(5px);
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.delete-window {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	width: 18rem;
+	padding: 2rem;
+	border: 1px solid black;
+	border-radius: 1rem;
+	text-align: center;
+	text-wrap: balance;
+	gap: 1rem;
+
+	background-color: white;
+
+	div {
+		display: flex;
+		justify-content: center;
+		gap: 1rem;
+
+		button {
+			padding: 0.5rem 1rem;
+			font-size: larger;
+		}
+	}
 }
