@@ -11,11 +11,68 @@ function changePage(pageName, itemIndex = null) {
 	updateView();
 }
 
-function saveItem() {}
+function handleCancelEdit() {
+	clearNewItemInputs();
+	changePage("home");
+}
+
+function gotoEditPage() {
+	// const item = model.data.items[model.app.currentItemIndex];
+	// model.inputs.newItem = {
+	// 	name: item.name,
+	// 	description: item.description,
+	// 	location: item.location,
+	// 	tagsRaw: "",
+	// 	tags: item.tags,
+	// 	notes: item.notes,
+	// 	imageUrl: item.imageUrl,
+	// };
+	// ^^^^ DOES THE SAME AS vvvv
+	Object.assign(
+		model.inputs.newItem,
+		model.data.items[model.app.currentItemIndex],
+	);
+
+	changePage("newItem", model.app.currentItemIndex);
+}
+
+function handleUploadImage(value) {
+	console.log(value);
+	const url = URL.createObjectURL(value);
+	console.log(url);
+	model.inputs.newItem.imageUrl = url;
+	updateView();
+}
+
+function deleteImage() {
+	model.inputs.newItem.imageUrl = "";
+	updateView();
+}
+//TODO: make this handle adding new items or make new function idk
+function handleSaveItem() {
+		Object.assign(
+			model.data.items[model.app.currentItemIndex],
+			model.inputs.newItem,
+		);
+		clearNewItemInputs();
+		changePage("home");
+	}
 
 function deleteItem() {
 	model.data.items.splice(model.app.currentItemIndex, 1);
 	changePage("home");
+}
+
+function clearNewItemInputs() {
+	model.inputs.newItem = {
+		name: "",
+		description: "",
+		location: "",
+		tagsRaw: "",
+		tags: [],
+		notes: "",
+		imageUrl: "",
+	};
 }
 
 function openModal(modalFunction) {

@@ -1,9 +1,13 @@
+const EDIT_MODE = 0;
+const CREATE_MODE = 1;
+
 const model = {
 	app: {
 		element: document.getElementById("app"),
 		currentPage: "home",
 		pages: ["home", "newItem", "viewItem"],
 		currentItemIndex: null,
+		itemMode: null,
 	},
 
 	inputs: {
@@ -54,7 +58,7 @@ const model = {
 				tags: ["verktøy", "batteri", "12v", "ryobi", "snekring"],
 				notes: "Lånt ut til kenneth",
 				imageUrl:
-					"https://images.clasohlson.com/medias/sys_master/hb6/h3d/68670492934174.png",
+					"https://cdn.shopify.com/s/files/1/0651/3668/9323/files/e76252c6aabc47f29094f6a3f85d839c_2000x2000.jpg?v=1734043233&width=100&height=100&crop=center",
 			},
 			{
 				name: "Hammer",

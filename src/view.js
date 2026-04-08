@@ -55,7 +55,7 @@ function addItemBtn() {
 	return /* html */ `
 		<button 
 			class="add-item-btn" 
-			onclick="changePage('newItem')">
+			onclick="changePage('newItem', model.data.items.length-1)">
 			<svg
 					xmlns="http://www.w3.org/2000/svg"
 					width="30"
@@ -80,33 +80,52 @@ function addItemBtn() {
 //#endregion
 
 //#region NEWITEM PAGE
+// function newItemPage() {
+// 	// Editing existing item
+// 	if (model.app.currentItemIndex !== null) {
+// 		const item = model.data.items[model.app.currentItemIndex];
+// 		return /* html */ `
+// 			<div class="new-item-page">
+// 				${showInput("Navn", "newItem", "name", item.name)}
+// 				${showInput("Beskrivelse", "newItem", "description", item.description)}
+// 				${showInput("Tags", "newItem", "tags", item.tags)}
+// 				${showInput("Sted", "newItem", "location", item.location)}
+// 				${showInput("Notater", "newItem", "notes", item.notes)}
+// 				${imageUpload()}
+// 				${actionButtons()}
+// 			</div>
+// 		`;
+// 	}
+
+// 	// Creating new item
+// 	return /* html */ `
+// 		<div class="new-item-page">
+// 			${showInput("Navn", "newItem", "name")}
+// 			${showInput("Beskrivelse", "newItem", "description")}
+// 			${showInput("Tags", "newItem", "tags")}
+// 			${showInput("Sted", "newItem", "location")}
+// 			${showInput("Notater", "newItem", "notes")}
+// 			${imageUpload()}
+// 			${actionButtons()}
+// 		</div>
+// 	`;
+// }
+
 function newItemPage() {
-	if (model.app.currentItemIndex !== null) {
-		const item = model.data.items[model.app.currentItemIndex];
-		return /* html */ `
+	// Editing existing item
+
+	return /* html */ `
 			<div class="new-item-page">
-				${showInput("Navn", "newItem", "name", item.name)}
-				${showInput("Beskrivelse", "newItem", "description", item.description)}
-				${showInput("Tags", "newItem", "tags", item.tags)}
-				${showInput("Sted", "newItem", "location", item.location)}
-				${showInput("Notater", "newItem", "notes", item.notes)}
+				${showInput("Navn", "newItem", "name", model.inputs.newItem.name)}
+				${showInput("Beskrivelse", "newItem", "description", model.inputs.newItem.description)}
+				${showInput("Tags", "newItem", "tags", model.inputs.newItem.tags)}
+				${showInput("Sted", "newItem", "location", model.inputs.newItem.location)}
+				${showInput("Notater", "newItem", "notes", model.inputs.newItem.notes)}
 				${imageUpload()}
+				${showDeleteImage()}
 				${actionButtons()}
 			</div>
 		`;
-	}
-
-	return /* html */ `
-		<div class="new-item-page">
-			${showInput("Navn", "newItem", "name")}
-			${showInput("Beskrivelse", "newItem", "description")}
-			${showInput("Tags", "newItem", "tags")}
-			${showInput("Sted", "newItem", "location")}
-			${showInput("Notater", "newItem", "notes")}
-			${imageUpload()}
-			${actionButtons()}
-		</div>
-	`;
 }
 
 function showInput(label, page, inputName, value = null) {
@@ -115,17 +134,32 @@ function showInput(label, page, inputName, value = null) {
 			class="input-field"
 			type="text" 
 			placeholder="${label}" 
-			oninput="model.inputs[${page}][${inputName}] = this.value"
+			oninput="model.inputs['${page}']['${inputName}'] = this.value"
 			value="${value ? value : ""}"/>
 	`;
 }
 
 function imageUpload() {
+	/* const imgSrc =
+		model.app.currentItemIndex === null
+			? model.inputs.newItem.imageUrl
+			: model.data.items[model.app.currentItemIndex].imageUrl; */
+
 	return /*HTML*/ `
-	<div class="image-upload" onclick="console.log('test')">
-		<img src="./public/upload-icon.svg"/> 
-		<span>Last opp bilde</span>
-	</div>
+		<div class="image-upload-container">
+			<input type="file" id="actual-btn" hidden onchange="handleUploadImage(this.files[0])"/>
+			<label for="actual-btn" class="image-upload" >
+				<img src="./public/upload-icon.svg"/> 
+				<span>Last opp bilde</span>
+			</label>
+			<img src="${model.inputs.newItem.imageUrl}" style="display: block">
+		</div>
+	`;
+}
+
+function showDeleteImage() {
+	return /*HTML*/ `
+	<button onclick="deleteImage()">Slett bilde</button>
 	`;
 }
 
@@ -134,12 +168,12 @@ function actionButtons() {
 		<div class="action-buttons">
 			<button
 				class="cancel"
-				onclick="changePage('home')">
+				onclick="handleCancelEdit()">
 				Avbryt
 			</button>
 			<button
 				class="save"
-				onclick="saveItem()">
+				onclick="handleSaveItem()">
 				Lagre
 			</button>
 		</div>`;
@@ -168,7 +202,7 @@ function viewItemPageBtns() {
 	return /*HTML*/ `
 	<div class="view-item-page-btns">
 		<button onclick="changePage('home')">Tilbake</button>
-		<button onclick="changePage('newItem',${model.app.currentItemIndex})">Rediger</button>
+		<button onclick="gotoEditPage()">Rediger</button>
 		<button onclick="openModal(confirmDeleteModal)">Slett</button>
 	</div>`;
 }
