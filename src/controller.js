@@ -48,15 +48,26 @@ function deleteImage() {
 	model.inputs.newItem.imageUrl = "";
 	updateView();
 }
-//TODO: make this handle adding new items or make new function idk
+
 function handleSaveItem() {
-		Object.assign(
-			model.data.items[model.app.currentItemIndex],
-			model.inputs.newItem,
-		);
-		clearNewItemInputs();
-		changePage("home");
+	if (!model.app.currentItemIndex < model.data.items.length) {
+		model.data.items[model.app.currentItemIndex] = {
+			name: "",
+			description: "",
+			location: "",
+			tagsRaw: "",
+			tags: [],
+			notes: "",
+			imageUrl: "",
+		};
 	}
+	Object.assign(
+		model.data.items[model.app.currentItemIndex],
+		model.inputs.newItem,
+	);
+	clearNewItemInputs();
+	changePage("home");
+}
 
 function deleteItem() {
 	model.data.items.splice(model.app.currentItemIndex, 1);

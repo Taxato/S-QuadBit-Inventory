@@ -55,7 +55,7 @@ function addItemBtn() {
 	return /* html */ `
 		<button 
 			class="add-item-btn" 
-			onclick="changePage('newItem', model.data.items.length-1)">
+			onclick="changePage('newItem', model.data.items.length)">
 			<svg
 					xmlns="http://www.w3.org/2000/svg"
 					width="30"
