@@ -69,6 +69,12 @@ function handleSaveItem() {
 	changePage("home");
 }
 
+function handleSaveNotes() {
+	model.data.items[model.app.currentItemIndex].notes =
+		model.inputs.viewItem.notes;
+	changePage("home");
+}
+
 function deleteItem() {
 	model.data.items.splice(model.app.currentItemIndex, 1);
 	changePage("home");

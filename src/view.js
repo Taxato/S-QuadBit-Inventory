@@ -112,8 +112,6 @@ function addItemBtn() {
 // }
 
 function newItemPage() {
-	// Editing existing item
-
 	return /* html */ `
 			<div class="new-item-page">
 				${showInput("Navn", "newItem", "name", model.inputs.newItem.name)}
@@ -128,12 +126,12 @@ function newItemPage() {
 		`;
 }
 
-function showInput(label, page, inputName, value = null) {
+function showInput(placeholder, page, inputName, value = null) {
 	return /* html */ `
 		<input 
 			class="input-field"
 			type="text" 
-			placeholder="${label}" 
+			placeholder="${placeholder}" 
 			oninput="model.inputs['${page}']['${inputName}'] = this.value"
 			value="${value ? value : ""}"/>
 	`;
@@ -192,8 +190,8 @@ function viewItemPage() {
 		<p>${item.description}</p>
 		<p>#</p>
 		<div class="notes-container">
-    	<input type="text" value="${item.notes}" id="notesInput">
-   	 	<button onclick="saveNotes()">Lagre</button>
+		${showInput("Notater", "viewItem", "notes", item.notes)}
+   	 	<button onclick="handleSaveNotes()">Lagre</button>
 	</div>
 	${viewItemPageBtns()}`;
 }
