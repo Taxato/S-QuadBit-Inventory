@@ -9,13 +9,15 @@ function updateView() {
 
 //#region HOMEPAGE
 function homePage() {
+	const items = filterItems(model.inputs.home.searchString);
+
 	return /* html */ `
 		<div class="home-page">
 			<div class="top-bar">
 				${searchBar()}
 				${addItemBtn()}
 			</div>
-			${itemGrid()}
+			${itemGrid(items)}
 		</div>
 	`;
 }
@@ -23,17 +25,17 @@ function homePage() {
 function searchBar() {
 	return /* html */ `
 		<div class="search-bar-container">
-			<input class="search-bar" placeholder="Søk etter navn eller #tags">
+			<input value="${model.inputs.home.searchString}" class="search-bar" placeholder="Søk etter navn eller #tags" onchange="model.inputs.home.searchString=this.value; updateView()">
 			<img src="./public/search-icon.svg" />
 		</div>
 	`;
 }
 
-function itemGrid() {
+function itemGrid(items) {
 	let html = /* html */ `<ul class="item-grid">`;
 
-	for (let i = 0; i < model.data.items.length; i++) {
-		html += itemEl(i, model.data.items[i]);
+	for (let i = 0; i < items.length; i++) {
+		html += itemEl(i, items[i]);
 	}
 
 	html += /* html */ `</ul>`;

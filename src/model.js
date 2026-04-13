@@ -140,5 +140,6 @@ const model = {
 					"https://assets.cdn.jula.com/v2/preset:jpgoptimized/w:640/215117?lastmodified=20251125141125",
 			},
 		],
+		filteredItems:[]
 	},
 };

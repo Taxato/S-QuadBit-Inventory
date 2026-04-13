@@ -103,6 +103,35 @@ function closeModal() {
 	document.getElementById("modal-wrapper").remove();
 }
 
+/**
+ * @param {string} searchString
+ */
+function filterItems(searchString) {
+	// const tags = Array.from(searchString.matchAll(/(?<=#)\p{L}+/giu),match=>match[0])
+	// const locations = Array.from(searchString.matchAll(/(?<=@)\p{L}+/giu),match=>match[0])
+
+	const words = searchString.split(" ");
+	const tags = words
+		.filter(word => word.startsWith("#"))
+		.map(word => word.slice(1));
+	console.log(tags);
+	const locations = words
+		.filter(word => word.startsWith("@"))
+		.map(word => word.slice(1));
+	console.log(locations);
+
+	let filteredItems = [...model.data.items];
+	if (locations.length > 0)
+		filteredItems = filteredItems.filter(item =>
+			locations.find(loc => item.location.toLowerCase().includes(loc)),
+		);
+	if (tags.length > 0) {
+		filteredItems = filteredItems.filter();
+	}
+
+	return filteredItems;
+}
+
 /* const searchString = "#verktøy #ryobi drill";
 
 const searchTerms = searchString.split(" ");
@@ -137,3 +166,29 @@ const squaredNumbers = numbers.map(number => number * number);
 
 console.log(squaredNumbers);
  */
+
+const myArrowFunction = name => "Hello " + name;
+function myNormalFunction(name) {
+	return "Hello " + name;
+}
+
+// console.log(myArrowFunction("Thomas"));
+// console.log(myNormalFunction("Thomas"));
+// console.log((name => "Hello " + name)("Thomas"))
+
+const arr = [10, 78, 2, 3, 4, 5, 6];
+
+function filterEvens(number) {
+	return number % 2 === 0;
+}
+
+const bigNumbers = arr.filter(num => num > 4);
+console.log(bigNumbers);
+
+const filteredArray = [];
+
+for (let i = 0; i < arr.length; i++) {
+	if (arr[i] > 4) filteredArray.push(arr[i]);
+}
+
+console.log(filteredArray);
