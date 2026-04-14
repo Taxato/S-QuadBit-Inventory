@@ -296,3 +296,20 @@ body {
 		max-width: 100%;
 	}
 }
+
+.tags {
+	display: flex;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	margin: 1rem;
+}
+
+.tag {
+	padding: 0.25rem 1rem;
+	border-radius: 9999rem;
+	text-transform: uppercase;
+	font-family: monospace;
+	font-size: x-large;
+}

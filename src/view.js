@@ -169,12 +169,26 @@ function viewItemPage() {
 			<p>${item.location}</p>
 			<img src="${item.imageUrl}">
 			<p>${item.description}</p>
-			<p>${item.tags.join(" | ")}</p>
+			<span class="tags">${item.tags.map(tag => tagEl(tag)).join("")}</span>
 			<div class="notes-container">
 			${showInput("Notater", "viewItem", "notes", item.notes)}
 			<button onclick="handleSaveNotes()">Lagre</button>
 		</div>
 		${viewItemPageBtns()}
+	`;
+}
+
+function tagEl(tag) {
+	const tagObj = model.data.tags.find(
+		t => t.name.toLowerCase() === tag.toLowerCase(),
+	);
+	return /* html */ `
+		<div 
+			class="tag" 
+			style="background-color:${tagObj.color}"
+			onclick="model.inputs.home.searchString='${tag}'; changePage('home')">
+			${tag}
+		</div>
 	`;
 }
 
