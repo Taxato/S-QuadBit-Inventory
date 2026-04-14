@@ -30,14 +30,11 @@ function searchBar() {
 }
 
 function itemGrid() {
-	let html = /* html */ `<ul class="item-grid">`;
-
-	for (let i = 0; i < model.data.items.length; i++) {
-		html += itemEl(i, model.data.items[i]);
-	}
-
-	html += /* html */ `</ul>`;
-	return html;
+	return /* html */ `
+		<ul class="item-grid">
+			${model.data.items.map((item, i) => itemEl(i, item)).join("")}
+		</ul>
+	`;
 }
 
 function itemEl(i, item) {
@@ -113,17 +110,17 @@ function addItemBtn() {
 
 function newItemPage() {
 	return /* html */ `
-			<div class="new-item-page">
-				${showInput("Navn", "newItem", "name", model.inputs.newItem.name)}
-				${showInput("Beskrivelse", "newItem", "description", model.inputs.newItem.description)}
-				${showInput("Tags", "newItem", "tags", model.inputs.newItem.tags)}
-				${showInput("Sted", "newItem", "location", model.inputs.newItem.location)}
-				${showInput("Notater", "newItem", "notes", model.inputs.newItem.notes)}
-				${imageUpload()}
-				${showDeleteImage()}
-				${actionButtons()}
-			</div>
-		`;
+		<div class="new-item-page">
+			${showInput("Navn", "newItem", "name", model.inputs.newItem.name)}
+			${showInput("Beskrivelse", "newItem", "description", model.inputs.newItem.description)}
+			${showInput("Tags", "newItem", "tags", model.inputs.newItem.tags)}
+			${showInput("Sted", "newItem", "location", model.inputs.newItem.location)}
+			${showInput("Notater", "newItem", "notes", model.inputs.newItem.notes)}
+			${imageUpload()}
+			${showDeleteImage()}
+			${actionButtons()}
+		</div>
+	`;
 }
 
 function showInput(placeholder, page, inputName, value = null) {
@@ -143,7 +140,7 @@ function imageUpload() {
 			? model.inputs.newItem.imageUrl
 			: model.data.items[model.app.currentItemIndex].imageUrl; */
 
-	return /*HTML*/ `
+	return /* html */ `
 		<div class="image-upload-container">
 			<input type="file" id="actual-btn" hidden onchange="handleUploadImage(this.files[0])"/>
 			<label for="actual-btn" class="image-upload" >
@@ -156,13 +153,13 @@ function imageUpload() {
 }
 
 function showDeleteImage() {
-	return /*HTML*/ `
-	<button onclick="deleteImage()">Slett bilde</button>
+	return /* html */ `
+		<button onclick="deleteImage()">Slett bilde</button>
 	`;
 }
 
 function actionButtons() {
-	return /*HTML*/ `
+	return /* html */ `
 		<div class="action-buttons">
 			<button
 				class="cancel"
@@ -174,7 +171,8 @@ function actionButtons() {
 				onclick="handleSaveItem()">
 				Lagre
 			</button>
-		</div>`;
+		</div>
+	`;
 }
 
 //#endregion
@@ -183,26 +181,28 @@ function actionButtons() {
 function viewItemPage() {
 	const item = model.data.items[model.app.currentItemIndex];
 	return /* html */ `
-	<div class="view-Item-Page">
-		<h1>${item.name}</h1>
-		<p>${item.location}</p>
-		<img src="${item.imageUrl}">
-		<p>${item.description}</p>
-		<p>#</p>
-		<div class="notes-container">
-		${showInput("Notater", "viewItem", "notes", item.notes)}
-   	 	<button onclick="handleSaveNotes()">Lagre</button>
-	</div>
-	${viewItemPageBtns()}`;
+		<div class="view-Item-Page">
+			<h1>${item.name}</h1>
+			<p>${item.location}</p>
+			<img src="${item.imageUrl}">
+			<p>${item.description}</p>
+			<p>#</p>
+			<div class="notes-container">
+			${showInput("Notater", "viewItem", "notes", item.notes)}
+			<button onclick="handleSaveNotes()">Lagre</button>
+		</div>
+		${viewItemPageBtns()}
+	`;
 }
 
 function viewItemPageBtns() {
-	return /*HTML*/ `
-	<div class="view-item-page-btns">
-		<button onclick="changePage('home')">Tilbake</button>
-		<button onclick="gotoEditPage()">Rediger</button>
-		<button onclick="openModal(confirmDeleteModal)">Slett</button>
-	</div>`;
+	return /* html */ `
+		<div class="view-item-page-btns">
+			<button onclick="changePage('home')">Tilbake</button>
+			<button onclick="gotoEditPage()">Rediger</button>
+			<button onclick="openModal(confirmDeleteModal)">Slett</button>
+		</div>
+	`;
 }
 
 function confirmDeleteModal() {
