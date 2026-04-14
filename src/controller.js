@@ -137,3 +137,42 @@ const squaredNumbers = numbers.map(number => number * number);
 
 console.log(squaredNumbers);
  */
+
+/** @param {string} searchString */
+function filterItems(searchString) {
+	let filteredItems = [...model.data.items];
+	const words = searchString
+		.split(" ")
+		.filter(w => w.length > 0)
+		.map(w => w.toLowerCase());
+	const tags = words.filter(w => w.startsWith("#")).map(w => w.slice(1));
+	const locations = words.filter(w => w.startsWith("@")).map(w => w.slice(1));
+	const remaindingWords = words.filter(
+		w => !(w.startsWith("#") || w.startsWith("@")),
+	);
+
+	if (tags.length > 0)
+		filteredItems = filteredItems.filter(item =>
+			tags.every(
+				tag =>
+					item.tags.find(t => t.toLowerCase().includes(tag)) !==
+					undefined,
+			),
+		);
+	if (locations.length > 0)
+		filteredItems = filteredItems.filter(item =>
+			locations.some(loc => item.location.toLowerCase().includes(loc)),
+		);
+	if (remaindingWords.length > 0)
+		filteredItems = filteredItems.filter(item => {
+			const itemNameWords = item.name.split(" ");
+			return remaindingWords.every(
+				w =>
+					itemNameWords.find(inw => inw.toLowerCase().includes(w)) !==
+					undefined,
+			);
+		});
+	console.log(filteredItems);
+
+	return filteredItems;
+}

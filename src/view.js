@@ -1,21 +1,34 @@
 function updateView() {
+	const filteredItems = filterItems(model.inputs.home.searchString);
+
+	// Keep search bar active
+	const searchInput = document.getElementById("search-input");
+	const cursor = searchInput?.selectionStart;
+	const hadFocus = document.activeElement === searchInput;
+
 	let html = "INVALID PAGE";
-	if (model.app.currentPage === "home") html = homePage();
+	if (model.app.currentPage === "home") html = homePage(filteredItems);
 	else if (model.app.currentPage === "newItem") html = newItemPage();
 	else if (model.app.currentPage === "viewItem") html = viewItemPage();
 	else console.error("Invalid page name");
 	model.app.element.innerHTML = html;
+
+	if (hadFocus) {
+		const newInput = document.getElementById("search-input");
+		newInput.focus();
+		newInput.setSelectionRange(cursor, cursor);
+	}
 }
 
 //#region HOMEPAGE
-function homePage() {
+function homePage(items) {
 	return /* html */ `
 		<div class="home-page">
 			<div class="top-bar">
 				${searchBar()}
 				${addItemBtn()}
 			</div>
-			${itemGrid()}
+			${itemGrid(items)}
 		</div>
 	`;
 }
@@ -23,16 +36,21 @@ function homePage() {
 function searchBar() {
 	return /* html */ `
 		<div class="search-bar-container">
-			<input class="search-bar" placeholder="Søk etter navn eller #tags">
+			<input 
+				id="search-input" 
+				class="search-bar" 
+				placeholder="Søk etter navn, #tags og @steder"
+				value="${model.inputs.home.searchString}"
+				oninput="model.inputs.home.searchString=this.value; updateView();">
 			<img src="./public/search-icon.svg" />
 		</div>
 	`;
 }
 
-function itemGrid() {
+function itemGrid(items) {
 	return /* html */ `
 		<ul class="item-grid">
-			${model.data.items.map((item, i) => itemEl(i, item)).join("")}
+			${items.map(item => itemEl(model.data.items.indexOf(item), item)).join("")}
 		</ul>
 	`;
 }
