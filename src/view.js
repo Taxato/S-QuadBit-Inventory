@@ -13,6 +13,7 @@ function updateView() {
 	else console.error("Invalid page name");
 	model.app.element.innerHTML = html;
 
+	// Re-Set focus
 	if (hadFocus) {
 		const newInput = document.getElementById("search-input");
 		newInput.focus();
@@ -95,43 +96,12 @@ function addItemBtn() {
 //#endregion
 
 //#region NEWITEM PAGE
-// function newItemPage() {
-// 	// Editing existing item
-// 	if (model.app.currentItemIndex !== null) {
-// 		const item = model.data.items[model.app.currentItemIndex];
-// 		return /* html */ `
-// 			<div class="new-item-page">
-// 				${showInput("Navn", "newItem", "name", item.name)}
-// 				${showInput("Beskrivelse", "newItem", "description", item.description)}
-// 				${showInput("Tags", "newItem", "tags", item.tags)}
-// 				${showInput("Sted", "newItem", "location", item.location)}
-// 				${showInput("Notater", "newItem", "notes", item.notes)}
-// 				${imageUpload()}
-// 				${actionButtons()}
-// 			</div>
-// 		`;
-// 	}
-
-// 	// Creating new item
-// 	return /* html */ `
-// 		<div class="new-item-page">
-// 			${showInput("Navn", "newItem", "name")}
-// 			${showInput("Beskrivelse", "newItem", "description")}
-// 			${showInput("Tags", "newItem", "tags")}
-// 			${showInput("Sted", "newItem", "location")}
-// 			${showInput("Notater", "newItem", "notes")}
-// 			${imageUpload()}
-// 			${actionButtons()}
-// 		</div>
-// 	`;
-// }
-
 function newItemPage() {
 	return /* html */ `
 		<div class="new-item-page">
 			${showInput("Navn", "newItem", "name", model.inputs.newItem.name)}
 			${showInput("Beskrivelse", "newItem", "description", model.inputs.newItem.description)}
-			${showInput("Tags", "newItem", "tags", model.inputs.newItem.tags)}
+			${showInput("Tags", "newItem", "tagsRaw", model.inputs.newItem.tagsRaw)}
 			${showInput("Sted", "newItem", "location", model.inputs.newItem.location)}
 			${showInput("Notater", "newItem", "notes", model.inputs.newItem.notes)}
 			${imageUpload()}
@@ -204,7 +174,7 @@ function viewItemPage() {
 			<p>${item.location}</p>
 			<img src="${item.imageUrl}">
 			<p>${item.description}</p>
-			<p>#</p>
+			<p>${item.tags.join(" | ")}</p>
 			<div class="notes-container">
 			${showInput("Notater", "viewItem", "notes", item.notes)}
 			<button onclick="handleSaveNotes()">Lagre</button>

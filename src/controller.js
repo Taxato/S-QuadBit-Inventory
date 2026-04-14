@@ -17,29 +17,21 @@ function handleCancelEdit() {
 }
 
 function gotoEditPage() {
-	// const item = model.data.items[model.app.currentItemIndex];
-	// model.inputs.newItem = {
-	// 	name: item.name,
-	// 	description: item.description,
-	// 	location: item.location,
-	// 	tagsRaw: "",
-	// 	tags: item.tags,
-	// 	notes: item.notes,
-	// 	imageUrl: item.imageUrl,
-	// };
-	// ^^^^ DOES THE SAME AS vvvv
-	Object.assign(
-		model.inputs.newItem,
-		model.data.items[model.app.currentItemIndex],
-	);
+	const item = model.data.items[model.app.currentItemIndex];
+	model.inputs.newItem = {
+		name: item.name,
+		description: item.description,
+		location: item.location,
+		tagsRaw: item.tags.join(", "),
+		notes: item.notes,
+		imageUrl: item.imageUrl,
+	};
 
 	changePage("newItem", model.app.currentItemIndex);
 }
 
 function handleUploadImage(value) {
-	console.log(value);
 	const url = URL.createObjectURL(value);
-	console.log(url);
 	model.inputs.newItem.imageUrl = url;
 	updateView();
 }
@@ -50,21 +42,15 @@ function deleteImage() {
 }
 
 function handleSaveItem() {
-	if (!model.app.currentItemIndex < model.data.items.length) {
-		model.data.items[model.app.currentItemIndex] = {
-			name: "",
-			description: "",
-			location: "",
-			tagsRaw: "",
-			tags: [],
-			notes: "",
-			imageUrl: "",
-		};
-	}
-	Object.assign(
-		model.data.items[model.app.currentItemIndex],
-		model.inputs.newItem,
-	);
+	model.data.items[model.app.currentItemIndex] = {
+		name: model.inputs.newItem.name,
+		description: model.inputs.newItem.description,
+		location: model.inputs.newItem.location,
+		tags: model.inputs.newItem.tagsRaw.split(/ ?, ?| /),
+		notes: model.inputs.newItem.notes,
+		imageUrl: model.inputs.newItem.imageUrl,
+	};
+
 	clearNewItemInputs();
 	changePage("home");
 }
@@ -151,7 +137,16 @@ function filterItems(searchString) {
 		w => !(w.startsWith("#") || w.startsWith("@")),
 	);
 
-	if (tags.length > 0)
+	filteredItems = filteredItems.filter(item =>
+		words.every(
+			w =>
+				item.name.toLowerCase().includes(w) ||
+				item.location.toLowerCase().includes(w) ||
+				item.tags.join(" ").toLowerCase().includes(w),
+		),
+	);
+
+	/* 	if (tags.length > 0)
 		filteredItems = filteredItems.filter(item =>
 			tags.every(
 				tag =>
@@ -159,10 +154,12 @@ function filterItems(searchString) {
 					undefined,
 			),
 		);
+
 	if (locations.length > 0)
 		filteredItems = filteredItems.filter(item =>
 			locations.some(loc => item.location.toLowerCase().includes(loc)),
 		);
+
 	if (remaindingWords.length > 0)
 		filteredItems = filteredItems.filter(item => {
 			const itemNameWords = item.name.split(" ");
@@ -171,8 +168,7 @@ function filterItems(searchString) {
 					itemNameWords.find(inw => inw.toLowerCase().includes(w)) !==
 					undefined,
 			);
-		});
-	console.log(filteredItems);
+		}); */
 
 	return filteredItems;
 }

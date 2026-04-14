@@ -21,7 +21,6 @@ const model = {
 			description: "",
 			location: "",
 			tagsRaw: "",
-			tags: [],
 			notes: "",
 			imageUrl: "",
 		},
