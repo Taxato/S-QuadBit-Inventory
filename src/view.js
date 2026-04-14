@@ -123,11 +123,6 @@ function showInput(placeholder, page, inputName, value = null) {
 }
 
 function imageUpload() {
-	/* const imgSrc =
-		model.app.currentItemIndex === null
-			? model.inputs.newItem.imageUrl
-			: model.data.items[model.app.currentItemIndex].imageUrl; */
-
 	return /* html */ `
 		<div class="image-upload-container">
 			<input type="file" id="actual-btn" hidden onchange="handleUploadImage(this.files[0])"/>

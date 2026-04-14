@@ -89,41 +89,6 @@ function closeModal() {
 	document.getElementById("modal-wrapper").remove();
 }
 
-/* const searchString = "#verktøy #ryobi drill";
-
-const searchTerms = searchString.split(" ");
-
-console.log(searchTerms);
-
-let searchTags = searchTerms
-	.filter(term => term.startsWith("#"))
-	.map(tag => tag.slice(1));
-
-searchTags = searchTerms
-	.filter(function (term) {
-		return term.startsWith("#");
-	})
-	.map(function (tag) {
-		return tag.slice(1);
-	});
-console.log(searchTags);
-
-const numbers = [1, 2, 3, 4];
-
-// for (let i = 0; i < numbers.length; i++) {
-// 	squaredNumbers.push(numbers[i] ** 2);
-// }
-
-// For each element in an array, call the callbackfunction on the element and create new array with the results
-const squaredNumbers = numbers.map(number => number * number);
-
-(Number, String, Boolean);
-(Array, Object, Function);
-(Set, Map); // Not needed almost at all
-
-console.log(squaredNumbers);
- */
-
 /** @param {string} searchString */
 function filterItems(searchString) {
 	let filteredItems = [...model.data.items];
@@ -131,12 +96,8 @@ function filterItems(searchString) {
 		.split(" ")
 		.filter(w => w.length > 0)
 		.map(w => w.toLowerCase());
-	const tags = words.filter(w => w.startsWith("#")).map(w => w.slice(1));
-	const locations = words.filter(w => w.startsWith("@")).map(w => w.slice(1));
-	const remaindingWords = words.filter(
-		w => !(w.startsWith("#") || w.startsWith("@")),
-	);
 
+	// Logic for searching using purely strings
 	filteredItems = filteredItems.filter(item =>
 		words.every(
 			w =>
@@ -146,7 +107,15 @@ function filterItems(searchString) {
 		),
 	);
 
-	/* 	if (tags.length > 0)
+	/* 	
+	// Logic for searching using prefixes (#, @)
+	const tags = words.filter(w => w.startsWith("#")).map(w => w.slice(1));
+	const locations = words.filter(w => w.startsWith("@")).map(w => w.slice(1));
+	const remaindingWords = words.filter(
+		w => !(w.startsWith("#") || w.startsWith("@")),
+	);
+
+	if (tags.length > 0)
 		filteredItems = filteredItems.filter(item =>
 			tags.every(
 				tag =>
