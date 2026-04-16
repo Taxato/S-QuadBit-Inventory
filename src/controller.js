@@ -42,16 +42,16 @@ function deleteImage() {
 }
 
 function handleSaveItem() {
+	const tags = splitRawTagString(model.inputs.newItem.tagsRaw);
 	model.data.items[model.app.currentItemIndex] = {
 		name: model.inputs.newItem.name,
 		description: model.inputs.newItem.description,
 		location: model.inputs.newItem.location,
-		tags: model.inputs.newItem.tagsRaw.split(/ ?, ?| /),
+		tags: tags,
 		notes: model.inputs.newItem.notes,
 		imageUrl: model.inputs.newItem.imageUrl,
 	};
-
-	handleSaveTags();
+	handleSaveTags(tags);
 
 	clearNewItemInputs();
 	changePage("home");
@@ -59,22 +59,15 @@ function handleSaveItem() {
 
 //breaks if more than one space between tags are used
 //adds duplicates to model.data.tags
-function handleSaveTags() {
-	if (model.inputs.newItem.tagsRaw !== model.data.tags) {
-		const words = model.inputs.newItem.tagsRaw
-			.split(/ ?, ?| /)
-			.map(w => w.toLowerCase())
-			.filter(w => w.includes(model.data.tags))
-			.filter(Boolean);
-		console.log(words);
-
-		words.forEach(word => {
-			model.data.tags.push({
-				name: word,
-				color: "#d3764e",
-			});
+function handleSaveTags(tags) {
+	const existingTagWords = model.data.tags.map(t => t.name);
+	const newTags = tags.filter(w => !existingTagWords.includes(w));
+	newTags.forEach(tag => {
+		model.data.tags.push({
+			name: tag,
+			color: generatePastelColor(),
 		});
-	}
+	});
 }
 
 function handleSaveNotes() {
@@ -129,7 +122,7 @@ function filterItems(searchString) {
 		),
 	);
 
-	/* 	
+	/*
 	// Logic for searching using prefixes (#, @)
 	const tags = words.filter(w => w.startsWith("#")).map(w => w.slice(1));
 	const locations = words.filter(w => w.startsWith("@")).map(w => w.slice(1));
@@ -159,7 +152,8 @@ function filterItems(searchString) {
 					itemNameWords.find(inw => inw.toLowerCase().includes(w)) !==
 					undefined,
 			);
-		}); */
+		}); 	
+	*/
 
 	return filteredItems;
 }
