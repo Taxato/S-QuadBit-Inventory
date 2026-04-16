@@ -51,8 +51,30 @@ function handleSaveItem() {
 		imageUrl: model.inputs.newItem.imageUrl,
 	};
 
+	handleSaveTags();
+
 	clearNewItemInputs();
 	changePage("home");
+}
+
+//breaks if more than one space between tags are used
+//adds duplicates to model.data.tags
+function handleSaveTags() {
+	if (model.inputs.newItem.tagsRaw !== model.data.tags) {
+		const words = model.inputs.newItem.tagsRaw
+			.split(/ ?, ?| /)
+			.map(w => w.toLowerCase())
+			.filter(w => w.includes(model.data.tags))
+			.filter(Boolean);
+		console.log(words);
+
+		words.forEach(word => {
+			model.data.tags.push({
+				name: word,
+				color: "#d3764e",
+			});
+		});
+	}
 }
 
 function handleSaveNotes() {

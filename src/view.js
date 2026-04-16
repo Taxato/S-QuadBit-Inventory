@@ -182,6 +182,7 @@ function tagEl(tag) {
 	const tagObj = model.data.tags.find(
 		t => t.name.toLowerCase() === tag.toLowerCase(),
 	);
+	console.log(tagObj);
 	return /* html */ `
 		<div 
 			class="tag" 
