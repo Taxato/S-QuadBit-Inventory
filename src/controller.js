@@ -17,29 +17,21 @@ function handleCancelEdit() {
 }
 
 function gotoEditPage() {
-	// const item = model.data.items[model.app.currentItemIndex];
-	// model.inputs.newItem = {
-	// 	name: item.name,
-	// 	description: item.description,
-	// 	location: item.location,
-	// 	tagsRaw: "",
-	// 	tags: item.tags,
-	// 	notes: item.notes,
-	// 	imageUrl: item.imageUrl,
-	// };
-	// ^^^^ DOES THE SAME AS vvvv
-	Object.assign(
-		model.inputs.newItem,
-		model.data.items[model.app.currentItemIndex],
-	);
+	const item = model.data.items[model.app.currentItemIndex];
+	model.inputs.newItem = {
+		name: item.name,
+		description: item.description,
+		location: item.location,
+		tagsRaw: item.tags.join(", "),
+		notes: item.notes,
+		imageUrl: item.imageUrl,
+	};
 
 	changePage("newItem", model.app.currentItemIndex);
 }
 
 function handleUploadImage(value) {
-	console.log(value);
 	const url = URL.createObjectURL(value);
-	console.log(url);
 	model.inputs.newItem.imageUrl = url;
 	updateView();
 }
@@ -50,21 +42,15 @@ function deleteImage() {
 }
 
 function handleSaveItem() {
-	if (!model.app.currentItemIndex < model.data.items.length) {
-		model.data.items[model.app.currentItemIndex] = {
-			name: "",
-			description: "",
-			location: "",
-			tagsRaw: "",
-			tags: [],
-			notes: "",
-			imageUrl: "",
-		};
-	}
-	Object.assign(
-		model.data.items[model.app.currentItemIndex],
-		model.inputs.newItem,
-	);
+	model.data.items[model.app.currentItemIndex] = {
+		name: model.inputs.newItem.name,
+		description: model.inputs.newItem.description,
+		location: model.inputs.newItem.location,
+		tags: model.inputs.newItem.tagsRaw.split(/ ?, ?| /),
+		notes: model.inputs.newItem.notes,
+		imageUrl: model.inputs.newItem.imageUrl,
+	};
+
 	clearNewItemInputs();
 	changePage("home");
 }
@@ -103,37 +89,55 @@ function closeModal() {
 	document.getElementById("modal-wrapper").remove();
 }
 
-/* const searchString = "#verktøy #ryobi drill";
+/** @param {string} searchString */
+function filterItems(searchString) {
+	let filteredItems = [...model.data.items];
+	const words = searchString
+		.split(" ")
+		.filter(w => w.length > 0)
+		.map(w => w.toLowerCase());
 
-const searchTerms = searchString.split(" ");
+	// Logic for searching using purely strings
+	filteredItems = filteredItems.filter(item =>
+		words.every(
+			w =>
+				item.name.toLowerCase().includes(w) ||
+				item.location.toLowerCase().includes(w) ||
+				item.tags.join(" ").toLowerCase().includes(w),
+		),
+	);
 
-console.log(searchTerms);
+	/* 	
+	// Logic for searching using prefixes (#, @)
+	const tags = words.filter(w => w.startsWith("#")).map(w => w.slice(1));
+	const locations = words.filter(w => w.startsWith("@")).map(w => w.slice(1));
+	const remaindingWords = words.filter(
+		w => !(w.startsWith("#") || w.startsWith("@")),
+	);
 
-let searchTags = searchTerms
-	.filter(term => term.startsWith("#"))
-	.map(tag => tag.slice(1));
+	if (tags.length > 0)
+		filteredItems = filteredItems.filter(item =>
+			tags.every(
+				tag =>
+					item.tags.find(t => t.toLowerCase().includes(tag)) !==
+					undefined,
+			),
+		);
 
-searchTags = searchTerms
-	.filter(function (term) {
-		return term.startsWith("#");
-	})
-	.map(function (tag) {
-		return tag.slice(1);
-	});
-console.log(searchTags);
+	if (locations.length > 0)
+		filteredItems = filteredItems.filter(item =>
+			locations.some(loc => item.location.toLowerCase().includes(loc)),
+		);
 
-const numbers = [1, 2, 3, 4];
+	if (remaindingWords.length > 0)
+		filteredItems = filteredItems.filter(item => {
+			const itemNameWords = item.name.split(" ");
+			return remaindingWords.every(
+				w =>
+					itemNameWords.find(inw => inw.toLowerCase().includes(w)) !==
+					undefined,
+			);
+		}); */
 
-// for (let i = 0; i < numbers.length; i++) {
-// 	squaredNumbers.push(numbers[i] ** 2);
-// }
-
-// For each element in an array, call the callbackfunction on the element and create new array with the results
-const squaredNumbers = numbers.map(number => number * number);
-
-(Number, String, Boolean);
-(Array, Object, Function);
-(Set, Map); // Not needed almost at all
-
-console.log(squaredNumbers);
- */
+	return filteredItems;
+}
