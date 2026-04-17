@@ -1,7 +1,7 @@
 const model = {
 	app: {
 		element: document.getElementById("app"),
-		currentPage: "newItem",
+		currentPage: "home",
 		pages: ["home", "newItem", "viewItem"],
 		currentItemIndex: null,
 	},
