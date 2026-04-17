@@ -1,3 +1,5 @@
+const DEFAULT_IMG_SRC = "./public/default-item-image.png";
+
 function updateView() {
 	const filteredItems = filterItems(model.inputs.home.searchString);
 
@@ -40,7 +42,7 @@ function searchBar() {
 			<input 
 				id="search-input" 
 				class="search-bar" 
-				placeholder="Søk etter navn, #tags og @steder"
+				placeholder="Søk etter navn, tags og steder"
 				value="${model.inputs.home.searchString}"
 				oninput="model.inputs.home.searchString=this.value; updateView();">
 			<img src="./public/search-icon.svg" />
@@ -61,7 +63,7 @@ function itemEl(i, item) {
 		<div 
 			class="item" 
 			onclick="changePage('viewItem',${i})">
-			<img src="${item.imageUrl}" alt="${item.name}" />
+			<img src="${item.imageUrl || DEFAULT_IMG_SRC}" alt="${item.name}" />
 			<h4>${item.name}</h4>
 		</div>
 	`;
@@ -74,20 +76,20 @@ function addItemBtn() {
 			onclick="changePage('newItem', model.data.items.length)">
 			<svg
 					xmlns="http://www.w3.org/2000/svg"
-					width="30"
-					height="30"
+					width="40"
+					height="40"
 					stroke-linecap="round"
-					stroke-width="1.5"
+					stroke-width="1.25"
 					viewBox="0 0 24 24">
 					<line
 						x1="12"
-						y1="4"
+						y1="6"
 						x2="12"
-						y2="20" />
+						y2="18" />
 					<line
-						x1="4"
+						x1="6"
 						y1="12"
-						x2="20"
+						x2="18"
 						y2="12" />
 				</svg>
 		</button>
@@ -105,7 +107,7 @@ function newItemPage() {
 			${showInput("Sted", "newItem", "location", model.inputs.newItem.location)}
 			${showInput("Notater", "newItem", "notes", model.inputs.newItem.notes)}
 			${imageUpload()}
-			${showDeleteImage()}
+			${model.inputs.newItem.imageUrl === "" ? "" : showDeleteImage()}
 			${actionButtons()}
 		</div>
 	`;
@@ -123,6 +125,8 @@ function showInput(placeholder, page, inputName, value = null) {
 }
 
 function imageUpload() {
+	const imgSrc = model.inputs.newItem.imageUrl;
+
 	return /* html */ `
 		<div class="image-upload-container">
 			<input type="file" id="actual-btn" hidden onchange="handleUploadImage(this.files[0])"/>
@@ -130,14 +134,18 @@ function imageUpload() {
 				<img src="./public/upload-icon.svg"/> 
 				<span>Last opp bilde</span>
 			</label>
-			<img src="${model.inputs.newItem.imageUrl}" style="display: block">
+			${
+				imgSrc === ""
+					? ""
+					: /* html */ `<img class="img-preview" src="${model.inputs.newItem.imageUrl}" style="display: block">`
+			}
 		</div>
 	`;
 }
 
 function showDeleteImage() {
 	return /* html */ `
-		<button onclick="deleteImage()">Slett bilde</button>
+		<button class="btn delete-img-btn" onclick="deleteImage()">Slett bilde</button>
 	`;
 }
 
@@ -145,12 +153,12 @@ function actionButtons() {
 	return /* html */ `
 		<div class="action-buttons">
 			<button
-				class="cancel"
+				class="cancel btn"
 				onclick="handleCancelEdit()">
 				Avbryt
 			</button>
 			<button
-				class="save"
+				class="save btn"
 				onclick="handleSaveItem()">
 				Lagre
 			</button>
@@ -164,15 +172,15 @@ function actionButtons() {
 function viewItemPage() {
 	const item = model.data.items[model.app.currentItemIndex];
 	return /* html */ `
-		<div class="view-Item-Page">
+		<div class="view-item-page">
 			<h1>${item.name}</h1>
-			<p>${item.location}</p>
+			<h3>${item.location}</h3>
 			<img src="${item.imageUrl}">
 			<p>${item.description}</p>
 			<span class="tags">${item.tags.map(tag => tagEl(tag)).join("")}</span>
 			<div class="notes-container">
 			${showInput("Notater", "viewItem", "notes", item.notes)}
-			<button onclick="handleSaveNotes()">Lagre</button>
+			<button class="btn" onclick="handleSaveNotes()">Lagre</button>
 		</div>
 		${viewItemPageBtns()}
 	`;
@@ -196,9 +204,9 @@ function tagEl(tag) {
 function viewItemPageBtns() {
 	return /* html */ `
 		<div class="view-item-page-btns">
-			<button onclick="changePage('home')">Tilbake</button>
-			<button onclick="gotoEditPage()">Rediger</button>
-			<button onclick="openModal(confirmDeleteModal)">Slett</button>
+			<button class="btn" onclick="changePage('home')">Tilbake</button>
+			<button class="btn" onclick="gotoEditPage()">Rediger</button>
+			<button class="btn" onclick="openModal(confirmDeleteModal)">Slett</button>
 		</div>
 	`;
 }
@@ -208,8 +216,8 @@ function confirmDeleteModal() {
 		<div class="delete-window">
 			<h4>Er du sikker på at du vil slette? Dette kan ikke gjøres om</h4>
 			<div>
-				<button onclick="closeModal()">Avbryt</button>
-				<button onclick="deleteItem()">Slett</button>
+				<button class="btn" onclick="closeModal()">Avbryt</button>
+				<button class="btn" onclick="deleteItem()">Slett</button>
 			</div>
 		</div>
 	`;

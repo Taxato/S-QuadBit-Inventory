@@ -1,13 +1,9 @@
-const EDIT_MODE = 0;
-const CREATE_MODE = 1;
-
 const model = {
 	app: {
 		element: document.getElementById("app"),
-		currentPage: "home",
+		currentPage: "newItem",
 		pages: ["home", "newItem", "viewItem"],
 		currentItemIndex: null,
-		itemMode: null,
 	},
 
 	inputs: {
@@ -65,8 +61,7 @@ const model = {
 				location: "Utebod",
 				tags: ["verktøy", "håndverktøy", "snekring"],
 				notes: "Krok på til å dra ut spiker",
-				imageUrl:
-					"https://www.estwing.com/wp-content/uploads/2022/03/prod_surestrike_nail_hammers_MRW16C_01_2000x2000-600x600.png.webp",
+				imageUrl: "",
 			},
 
 			{
