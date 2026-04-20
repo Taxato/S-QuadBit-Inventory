@@ -1,13 +1,9 @@
-const EDIT_MODE = 0;
-const CREATE_MODE = 1;
-
 const model = {
 	app: {
 		element: document.getElementById("app"),
 		currentPage: "home",
 		pages: ["home", "newItem", "viewItem"],
 		currentItemIndex: null,
-		itemMode: null,
 	},
 
 	inputs: {
@@ -21,7 +17,6 @@ const model = {
 			description: "",
 			location: "",
 			tagsRaw: "",
-			tags: [],
 			notes: "",
 			imageUrl: "",
 		},
@@ -33,21 +28,21 @@ const model = {
 
 	data: {
 		tags: [
-			"verktøy",
-			"batteri",
-			"12v",
-			"ryobi",
-			"snekring",
-			"håndverktøy",
-			"18v",
-			"Meec",
-			"sag",
-			"forbruksvare",
-			"bøtte",
-			"badeand",
-			"leke",
-			"badekar",
-			"skru",
+			{ name: "verktøy", color: "hsl(354, 100%, 85%)" },
+			{ name: "batteri", color: "hsl(32, 100%, 87%)" },
+			{ name: "12v", color: "hsl(51, 100%, 85%)" },
+			{ name: "ryobi", color: "hsl(133, 100%, 87%)" },
+			{ name: "snekring", color: "hsl(158, 56%, 81%)" },
+			{ name: "håndverktøy", color: "hsl(228, 46%, 85%)" },
+			{ name: "18v", color: "hsl(270, 100%, 83%)" },
+			{ name: "Meec", color: "hsl(178, 60%, 77%)" },
+			{ name: "sag", color: "hsl(338, 100%, 83%)" },
+			{ name: "forbruksvare", color: "hsl(33, 100%, 82%)" },
+			{ name: "bøtte", color: "hsl(62, 100%, 86%)" },
+			{ name: "badeand", color: "hsl(110, 100%, 88%)" },
+			{ name: "leke", color: "hsl(185, 100%, 80%)" },
+			{ name: "badekar", color: "hsl(219, 100%, 84%)" },
+			{ name: "skru", color: "hsl(300, 100%, 89%)" },
 		],
 		items: [
 			{
@@ -66,8 +61,7 @@ const model = {
 				location: "Utebod",
 				tags: ["verktøy", "håndverktøy", "snekring"],
 				notes: "Krok på til å dra ut spiker",
-				imageUrl:
-					"https://www.estwing.com/wp-content/uploads/2022/03/prod_surestrike_nail_hammers_MRW16C_01_2000x2000-600x600.png.webp",
+				imageUrl: "",
 			},
 
 			{
@@ -140,6 +134,5 @@ const model = {
 					"https://assets.cdn.jula.com/v2/preset:jpgoptimized/w:640/215117?lastmodified=20251125141125",
 			},
 		],
-		filteredItems:[]
 	},
 };

@@ -17,29 +17,21 @@ function handleCancelEdit() {
 }
 
 function gotoEditPage() {
-	// const item = model.data.items[model.app.currentItemIndex];
-	// model.inputs.newItem = {
-	// 	name: item.name,
-	// 	description: item.description,
-	// 	location: item.location,
-	// 	tagsRaw: "",
-	// 	tags: item.tags,
-	// 	notes: item.notes,
-	// 	imageUrl: item.imageUrl,
-	// };
-	// ^^^^ DOES THE SAME AS vvvv
-	Object.assign(
-		model.inputs.newItem,
-		model.data.items[model.app.currentItemIndex],
-	);
+	const item = model.data.items[model.app.currentItemIndex];
+	model.inputs.newItem = {
+		name: item.name,
+		description: item.description,
+		location: item.location,
+		tagsRaw: item.tags.join(", "),
+		notes: item.notes,
+		imageUrl: item.imageUrl,
+	};
 
 	changePage("newItem", model.app.currentItemIndex);
 }
 
 function handleUploadImage(value) {
-	console.log(value);
 	const url = URL.createObjectURL(value);
-	console.log(url);
 	model.inputs.newItem.imageUrl = url;
 	updateView();
 }
@@ -50,23 +42,32 @@ function deleteImage() {
 }
 
 function handleSaveItem() {
-	if (!model.app.currentItemIndex < model.data.items.length) {
-		model.data.items[model.app.currentItemIndex] = {
-			name: "",
-			description: "",
-			location: "",
-			tagsRaw: "",
-			tags: [],
-			notes: "",
-			imageUrl: "",
-		};
-	}
-	Object.assign(
-		model.data.items[model.app.currentItemIndex],
-		model.inputs.newItem,
-	);
+	const tags = splitRawTagString(model.inputs.newItem.tagsRaw);
+	model.data.items[model.app.currentItemIndex] = {
+		name: model.inputs.newItem.name,
+		description: model.inputs.newItem.description,
+		location: model.inputs.newItem.location,
+		tags: tags,
+		notes: model.inputs.newItem.notes,
+		imageUrl: model.inputs.newItem.imageUrl,
+	};
+	handleSaveTags(tags);
+
 	clearNewItemInputs();
 	changePage("home");
+}
+
+//breaks if more than one space between tags are used
+//adds duplicates to model.data.tags
+function handleSaveTags(tags) {
+	const existingTagWords = model.data.tags.map(t => t.name);
+	const newTags = tags.filter(w => !existingTagWords.includes(w));
+	newTags.forEach(tag => {
+		model.data.tags.push({
+			name: tag,
+			color: generatePastelColor(),
+		});
+	});
 }
 
 function handleSaveNotes() {
@@ -103,92 +104,56 @@ function closeModal() {
 	document.getElementById("modal-wrapper").remove();
 }
 
-/**
- * @param {string} searchString
- */
+/** @param {string} searchString */
 function filterItems(searchString) {
-	// const tags = Array.from(searchString.matchAll(/(?<=#)\p{L}+/giu),match=>match[0])
-	// const locations = Array.from(searchString.matchAll(/(?<=@)\p{L}+/giu),match=>match[0])
-
-	const words = searchString.split(" ");
-	const tags = words
-		.filter(word => word.startsWith("#"))
-		.map(word => word.slice(1));
-	console.log(tags);
-	const locations = words
-		.filter(word => word.startsWith("@"))
-		.map(word => word.slice(1));
-	console.log(locations);
-
 	let filteredItems = [...model.data.items];
+	const words = searchString
+		.split(" ")
+		.filter(w => w.length > 0)
+		.map(w => w.toLowerCase());
+
+	// Logic for searching using purely strings
+	filteredItems = filteredItems.filter(item =>
+		words.every(
+			w =>
+				item.name.toLowerCase().includes(w) ||
+				item.location.toLowerCase().includes(w) ||
+				item.tags.join(" ").toLowerCase().includes(w),
+		),
+	);
+
+	/*
+	// Logic for searching using prefixes (#, @)
+	const tags = words.filter(w => w.startsWith("#")).map(w => w.slice(1));
+	const locations = words.filter(w => w.startsWith("@")).map(w => w.slice(1));
+	const remaindingWords = words.filter(
+		w => !(w.startsWith("#") || w.startsWith("@")),
+	);
+
+	if (tags.length > 0)
+		filteredItems = filteredItems.filter(item =>
+			tags.every(
+				tag =>
+					item.tags.find(t => t.toLowerCase().includes(tag)) !==
+					undefined,
+			),
+		);
+
 	if (locations.length > 0)
 		filteredItems = filteredItems.filter(item =>
-			locations.find(loc => item.location.toLowerCase().includes(loc)),
+			locations.some(loc => item.location.toLowerCase().includes(loc)),
 		);
-	if (tags.length > 0) {
-		filteredItems = filteredItems.filter();
-	}
+
+	if (remaindingWords.length > 0)
+		filteredItems = filteredItems.filter(item => {
+			const itemNameWords = item.name.split(" ");
+			return remaindingWords.every(
+				w =>
+					itemNameWords.find(inw => inw.toLowerCase().includes(w)) !==
+					undefined,
+			);
+		}); 	
+	*/
 
 	return filteredItems;
 }
-
-/* const searchString = "#verktøy #ryobi drill";
-
-const searchTerms = searchString.split(" ");
-
-console.log(searchTerms);
-
-let searchTags = searchTerms
-	.filter(term => term.startsWith("#"))
-	.map(tag => tag.slice(1));
-
-searchTags = searchTerms
-	.filter(function (term) {
-		return term.startsWith("#");
-	})
-	.map(function (tag) {
-		return tag.slice(1);
-	});
-console.log(searchTags);
-
-const numbers = [1, 2, 3, 4];
-
-// for (let i = 0; i < numbers.length; i++) {
-// 	squaredNumbers.push(numbers[i] ** 2);
-// }
-
-// For each element in an array, call the callbackfunction on the element and create new array with the results
-const squaredNumbers = numbers.map(number => number * number);
-
-(Number, String, Boolean);
-(Array, Object, Function);
-(Set, Map); // Not needed almost at all
-
-console.log(squaredNumbers);
- */
-
-const myArrowFunction = name => "Hello " + name;
-function myNormalFunction(name) {
-	return "Hello " + name;
-}
-
-// console.log(myArrowFunction("Thomas"));
-// console.log(myNormalFunction("Thomas"));
-// console.log((name => "Hello " + name)("Thomas"))
-
-const arr = [10, 78, 2, 3, 4, 5, 6];
-
-function filterEvens(number) {
-	return number % 2 === 0;
-}
-
-const bigNumbers = arr.filter(num => num > 4);
-console.log(bigNumbers);
-
-const filteredArray = [];
-
-for (let i = 0; i < arr.length; i++) {
-	if (arr[i] > 4) filteredArray.push(arr[i]);
-}
-
-console.log(filteredArray);

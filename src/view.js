@@ -1,16 +1,30 @@
+const DEFAULT_IMG_SRC = "./public/default-item-image.png";
+
 function updateView() {
+	const filteredItems = filterItems(model.inputs.home.searchString);
+
+	// Keep search bar active
+	const searchInput = document.getElementById("search-input");
+	const cursor = searchInput?.selectionStart;
+	const hadFocus = document.activeElement === searchInput;
+
 	let html = "INVALID PAGE";
-	if (model.app.currentPage === "home") html = homePage();
+	if (model.app.currentPage === "home") html = homePage(filteredItems);
 	else if (model.app.currentPage === "newItem") html = newItemPage();
 	else if (model.app.currentPage === "viewItem") html = viewItemPage();
 	else console.error("Invalid page name");
 	model.app.element.innerHTML = html;
+
+	// Re-Set focus
+	if (hadFocus) {
+		const newInput = document.getElementById("search-input");
+		newInput.focus();
+		newInput.setSelectionRange(cursor, cursor);
+	}
 }
 
 //#region HOMEPAGE
-function homePage() {
-	const items = filterItems(model.inputs.home.searchString);
-
+function homePage(items) {
 	return /* html */ `
 		<div class="home-page">
 			<div class="top-bar">
@@ -18,6 +32,7 @@ function homePage() {
 				${addItemBtn()}
 			</div>
 			${itemGrid(items)}
+			${addClearSearchBtn()}
 		</div>
 	`;
 }
@@ -25,21 +40,23 @@ function homePage() {
 function searchBar() {
 	return /* html */ `
 		<div class="search-bar-container">
-			<input value="${model.inputs.home.searchString}" class="search-bar" placeholder="Søk etter navn eller #tags" onchange="model.inputs.home.searchString=this.value; updateView()">
+			<input 
+				id="search-input" 
+				class="search-bar" 
+				placeholder="Søk etter navn, tags og steder"
+				value="${model.inputs.home.searchString}"
+				oninput="model.inputs.home.searchString=this.value; updateView();">
 			<img src="./public/search-icon.svg" />
 		</div>
 	`;
 }
 
 function itemGrid(items) {
-	let html = /* html */ `<ul class="item-grid">`;
-
-	for (let i = 0; i < items.length; i++) {
-		html += itemEl(i, items[i]);
-	}
-
-	html += /* html */ `</ul>`;
-	return html;
+	return /* html */ `
+		<ul class="item-grid">
+			${items.map(item => itemEl(model.data.items.indexOf(item), item)).join("")}
+		</ul>
+	`;
 }
 
 function itemEl(i, item) {
@@ -47,7 +64,7 @@ function itemEl(i, item) {
 		<div 
 			class="item" 
 			onclick="changePage('viewItem',${i})">
-			<img src="${item.imageUrl}" alt="${item.name}" />
+			<img src="${item.imageUrl || DEFAULT_IMG_SRC}" alt="${item.name}" />
 			<h4>${item.name}</h4>
 		</div>
 	`;
@@ -60,72 +77,61 @@ function addItemBtn() {
 			onclick="changePage('newItem', model.data.items.length)">
 			<svg
 					xmlns="http://www.w3.org/2000/svg"
-					width="30"
-					height="30"
+					width="40"
+					height="40"
 					stroke-linecap="round"
-					stroke-width="1.5"
+					stroke-width="1.25"
 					viewBox="0 0 24 24">
 					<line
 						x1="12"
-						y1="4"
+						y1="6"
 						x2="12"
-						y2="20" />
+						y2="18" />
 					<line
-						x1="4"
+						x1="6"
 						y1="12"
-						x2="20"
+						x2="18"
 						y2="12" />
 				</svg>
 		</button>
 	`;
 }
+
+function addClearSearchBtn() {
+	const searchString = model.inputs.home.searchString;
+	const button = `
+		<button
+			class="btn"
+			onclick="model.inputs.home.searchString = '';updateView()">
+			Tilbake
+		</button>`;
+
+	return searchString ? button : "";
+
+	//if (searchString) {
+	//return /*HTML*/ `
+	//<button class="btn" onclick="model.inputs.home.searchString = '';updateView()">Tilbake</button>
+	//`;
+	//} else {
+	//	return /*HTML*/ "";
+	//}
+}
 //#endregion
 
 //#region NEWITEM PAGE
-// function newItemPage() {
-// 	// Editing existing item
-// 	if (model.app.currentItemIndex !== null) {
-// 		const item = model.data.items[model.app.currentItemIndex];
-// 		return /* html */ `
-// 			<div class="new-item-page">
-// 				${showInput("Navn", "newItem", "name", item.name)}
-// 				${showInput("Beskrivelse", "newItem", "description", item.description)}
-// 				${showInput("Tags", "newItem", "tags", item.tags)}
-// 				${showInput("Sted", "newItem", "location", item.location)}
-// 				${showInput("Notater", "newItem", "notes", item.notes)}
-// 				${imageUpload()}
-// 				${actionButtons()}
-// 			</div>
-// 		`;
-// 	}
-
-// 	// Creating new item
-// 	return /* html */ `
-// 		<div class="new-item-page">
-// 			${showInput("Navn", "newItem", "name")}
-// 			${showInput("Beskrivelse", "newItem", "description")}
-// 			${showInput("Tags", "newItem", "tags")}
-// 			${showInput("Sted", "newItem", "location")}
-// 			${showInput("Notater", "newItem", "notes")}
-// 			${imageUpload()}
-// 			${actionButtons()}
-// 		</div>
-// 	`;
-// }
-
 function newItemPage() {
 	return /* html */ `
-			<div class="new-item-page">
-				${showInput("Navn", "newItem", "name", model.inputs.newItem.name)}
-				${showInput("Beskrivelse", "newItem", "description", model.inputs.newItem.description)}
-				${showInput("Tags", "newItem", "tags", model.inputs.newItem.tags)}
-				${showInput("Sted", "newItem", "location", model.inputs.newItem.location)}
-				${showInput("Notater", "newItem", "notes", model.inputs.newItem.notes)}
-				${imageUpload()}
-				${showDeleteImage()}
-				${actionButtons()}
-			</div>
-		`;
+		<div class="new-item-page">
+			${showInput("Navn", "newItem", "name", model.inputs.newItem.name)}
+			${showInput("Beskrivelse", "newItem", "description", model.inputs.newItem.description)}
+			${showInput("Tags", "newItem", "tagsRaw", model.inputs.newItem.tagsRaw)}
+			${showInput("Sted", "newItem", "location", model.inputs.newItem.location)}
+			${showInput("Notater", "newItem", "notes", model.inputs.newItem.notes)}
+			${imageUpload()}
+			${model.inputs.newItem.imageUrl === "" ? "" : showDeleteImage()}
+			${actionButtons()}
+		</div>
+	`;
 }
 
 function showInput(placeholder, page, inputName, value = null) {
@@ -140,43 +146,45 @@ function showInput(placeholder, page, inputName, value = null) {
 }
 
 function imageUpload() {
-	/* const imgSrc =
-		model.app.currentItemIndex === null
-			? model.inputs.newItem.imageUrl
-			: model.data.items[model.app.currentItemIndex].imageUrl; */
+	const imgSrc = model.inputs.newItem.imageUrl;
 
-	return /*HTML*/ `
+	return /* html */ `
 		<div class="image-upload-container">
 			<input type="file" id="actual-btn" hidden onchange="handleUploadImage(this.files[0])"/>
 			<label for="actual-btn" class="image-upload" >
 				<img src="./public/upload-icon.svg"/> 
 				<span>Last opp bilde</span>
 			</label>
-			<img src="${model.inputs.newItem.imageUrl}" style="display: block">
+			${
+				imgSrc === ""
+					? ""
+					: /* html */ `<img class="img-preview" src="${model.inputs.newItem.imageUrl}" style="display: block">`
+			}
 		</div>
 	`;
 }
 
 function showDeleteImage() {
-	return /*HTML*/ `
-	<button onclick="deleteImage()">Slett bilde</button>
+	return /* html */ `
+		<button class="btn delete-img-btn" onclick="deleteImage()">Slett bilde</button>
 	`;
 }
 
 function actionButtons() {
-	return /*HTML*/ `
+	return /* html */ `
 		<div class="action-buttons">
 			<button
-				class="cancel"
+				class="cancel btn"
 				onclick="handleCancelEdit()">
 				Avbryt
 			</button>
 			<button
-				class="save"
+				class="save btn"
 				onclick="handleSaveItem()">
 				Lagre
 			</button>
-		</div>`;
+		</div>
+	`;
 }
 
 //#endregion
@@ -185,26 +193,43 @@ function actionButtons() {
 function viewItemPage() {
 	const item = model.data.items[model.app.currentItemIndex];
 	return /* html */ `
-	<div class="view-Item-Page">
-		<h1>${item.name}</h1>
-		<p>${item.location}</p>
-		<img src="${item.imageUrl}">
-		<p>${item.description}</p>
-		<p>#</p>
-		<div class="notes-container">
-		${showInput("Notater", "viewItem", "notes", item.notes)}
-   	 	<button onclick="handleSaveNotes()">Lagre</button>
-	</div>
-	${viewItemPageBtns()}`;
+		<div class="view-item-page">
+			<h1>${item.name}</h1>
+			<h3>${item.location}</h3>
+			<img src="${item.imageUrl}">
+			<p>${item.description}</p>
+			<span class="tags">${item.tags.map(tag => tagEl(tag)).join("")}</span>
+			<div class="notes-container">
+			${showInput("Notater", "viewItem", "notes", item.notes)}
+			<button class="btn" onclick="handleSaveNotes()">Lagre</button>
+		</div>
+		${viewItemPageBtns()}
+	`;
+}
+
+function tagEl(tag) {
+	const tagObj = model.data.tags.find(
+		t => t.name.toLowerCase() === tag.toLowerCase(),
+	);
+	console.log(tagObj);
+	return /* html */ `
+		<div 
+			class="tag" 
+			style="background-color:${tagObj.color}"
+			onclick="model.inputs.home.searchString='${tag}'; changePage('home')">
+			${tag}
+		</div>
+	`;
 }
 
 function viewItemPageBtns() {
-	return /*HTML*/ `
-	<div class="view-item-page-btns">
-		<button onclick="changePage('home')">Tilbake</button>
-		<button onclick="gotoEditPage()">Rediger</button>
-		<button onclick="openModal(confirmDeleteModal)">Slett</button>
-	</div>`;
+	return /* html */ `
+		<div class="view-item-page-btns">
+			<button class="btn" onclick="changePage('home')">Tilbake</button>
+			<button class="btn" onclick="gotoEditPage()">Rediger</button>
+			<button class="btn" onclick="openModal(confirmDeleteModal)">Slett</button>
+		</div>
+	`;
 }
 
 function confirmDeleteModal() {
@@ -212,8 +237,8 @@ function confirmDeleteModal() {
 		<div class="delete-window">
 			<h4>Er du sikker på at du vil slette? Dette kan ikke gjøres om</h4>
 			<div>
-				<button onclick="closeModal()">Avbryt</button>
-				<button onclick="deleteItem()">Slett</button>
+				<button class="btn" onclick="closeModal()">Avbryt</button>
+				<button class="btn" onclick="deleteItem()">Slett</button>
 			</div>
 		</div>
 	`;
