@@ -32,6 +32,7 @@ function homePage(items) {
 				${addItemBtn()}
 			</div>
 			${itemGrid(items)}
+			${addClearSearchBtn()}
 		</div>
 	`;
 }
@@ -94,6 +95,26 @@ function addItemBtn() {
 				</svg>
 		</button>
 	`;
+}
+
+function addClearSearchBtn() {
+	const searchString = model.inputs.home.searchString;
+	const button = `
+		<button
+			class="btn"
+			onclick="model.inputs.home.searchString = '';updateView()">
+			Tilbake
+		</button>`;
+
+	return searchString ? button : "";
+
+	//if (searchString) {
+	//return /*HTML*/ `
+	//<button class="btn" onclick="model.inputs.home.searchString = '';updateView()">Tilbake</button>
+	//`;
+	//} else {
+	//	return /*HTML*/ "";
+	//}
 }
 //#endregion
 
